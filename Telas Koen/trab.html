@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="PT-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipocando Cinema</title>
+    <link rel="shortcut icon" href="images/pipoca.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        .featured-movie {
+            max-height: 200px;
+            object-fit: cover;
+        }
+        .btn-primary {
+            width: 100%;
+        }
+        .movie-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .movie-card .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .trailer {
+            position: relative;
+            padding-bottom: 40%;
+            height: 0;
+            overflow: hidden;
+        }
+        .trailer iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .user-menu {
+            position: relative;
+        }
+        .dropdown-toggle {
+            border-radius: 30px;  /* Botão com bordas mais arredondadas */
+            padding: 10px 20px;   /* Aumentar o tamanho do botão para maior destaque */
+            background-color: #f8f9fa; /* Cor de fundo suave */
+            border: 2px solid #007bff; /* Borda azul */
+            color: #007bff; /* Cor do texto */
+            font-weight: bold; /* Tornar o texto mais destacado */
+            width: 100%; /* Faz o botão ter a largura total disponível */
+        }
+        .dropdown-menu {
+            border-radius: 5px; /* Borda mais suave para o menu */
+        }
+        .dropdown-menu a {
+            font-weight: normal; /* Remover o estilo bold do menu */
+        }
+        .dropdown-toggle:hover {
+            background-color: #007bff; /* Cor de fundo ao passar o mouse */
+            color: #fff; /* Cor do texto ao passar o mouse */
+        }
+        .dropdown-menu a:hover {
+            background-color: #f1f1f1; /* Cor de fundo dos itens do menu ao passar o mouse */
+        }
+        /* Ajuste para o cabeçalho (title + busca) */
+        .header-container {
+            margin-bottom: 30px; /* Espaço entre o header e o conteúdo abaixo */
+        }
+        .header-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Alinha os botões à esquerda */
+        }
+        /* Botão de usuário fixo no canto superior direito */
+        .user-menu-container {
+            position: fixed; /* Faz o botão ficar fixo */
+            top: 20px; /* Distância do topo */
+            right: 20px; /* Distância da direita */
+            z-index: 10; /* Garante que o botão fique por cima dos outros elementos */
+        }
+        /* Estilo do botão de compra de ingressos */
+        .btn-ticket {
+            background-color: #28a745; /* Cor verde para o botão */
+            color: white; /* Cor do texto do botão */
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        .btn-ticket:hover {
+            background-color: #218838; /* Cor mais escura ao passar o mouse */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container my-5">
+        <!-- Header -->
+        <div class="card mb-4 shadow-sm header-container">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <!-- Título "Pipocando Cinema" -->
+                <h1 class="mb-0">Pipocando Cinema🍿</h1>
+                <!-- Agrupar botões dentro de uma div para controle do layout -->
+                <div class="header-buttons">
+                    <form class="d-flex" role="search" onsubmit="filterMovies(event)">
+                        <input type="text" id="searchInput" class="form-control w-50" placeholder="Buscar filmes..." aria-label="Buscar filmes">
+                        <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão de Usuário fixo no canto superior direito -->
+        <div class="user-menu-container">
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="bi bi-person-circle"></span> Usuário
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="#">Minha Conta</a></li>
+                    <li><a class="dropdown-item" href="#">Sair</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Trailer do Filme -->
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="text-center mb-4">Trailer do Filme</h2>
+                        <div class="trailer">
+                            <iframe 
+                                id="trailerFrame"
+                                src="https://www.youtube.com/embed/defaultTrailer" 
+                                frameborder="0" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filmes em Destaque -->
+        <div class="row g-4" id="movieGrid">
+            <div class="col-md-3 movie-item" data-title="Se7en: Os Sete Crimes Capitais">
+                <div class="card movie-card h-100 text-center shadow-sm">
+                    <img src="images/4.png" class="card-img-top featured-movie" alt="Movie Poster">
+                    <div class="card-body">
+                        <h3 class="card-title">Se7en: Os Sete Crimes Capitais</h3>
+                        <button class="btn btn-primary" onclick="updateTrailer('https://www.youtube.com/embed/_ZeWFddoohs')">Assistir Agora</button>
+                        <!-- Botão de Compra de Ingressos -->
+                        <a href="PiVendas.html" class="btn-ticket">Comprar Ingressos</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 movie-item" data-title="Fogo Contra Fogo">
+                <div class="card movie-card h-100 text-center shadow-sm">
+                    <img src="images/2.png" class="card-img-top featured-movie" alt="Movie Poster">
+                    <div class="card-body">
+                        <h3 class="card-title">Fogo Contra Fogo</h3>
+                        <button class="btn btn-primary" onclick="updateTrailer('https://www.youtube.com/embed/jTt_YulSqrc')">Assistir Agora</button>
+                        <!-- Botão de Compra de Ingressos -->
+                        <a href="PiVendas.html" class="btn-ticket">Comprar Ingressos</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 movie-item" data-title="Ilha do Medo">
+                <div class="card movie-card h-100 text-center shadow-sm">
+                    <img src="images/1.png" class="card-img-top featured-movie" alt="Movie Poster">
+                    <div class="card-body">
+                        <h3 class="card-title">Ilha do Medo</h3>
+                        <button class="btn btn-primary" onclick="updateTrailer('https://www.youtube.com/embed/BguUtyCzM7o')">Assistir Agora</button>
+                        <!-- Botão de Compra de Ingressos -->
+                        <a href="PiVendas.html" class="btn-ticket">Comprar Ingressos</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 movie-item" data-title="OPPENHEIMER">
+                <div class="card movie-card h-100 text-center shadow-sm">
+                    <img src="images/3.png" class="card-img-top featured-movie" alt="Movie Poster">
+                    <div class="card-body">
+                        <h3 class="card-title">OPPENHEIMER</h3>
+                        <button class="btn btn-primary" onclick="updateTrailer('https://www.youtube.com/embed/kEGlCYF5gaU')">Assistir Agora</button>
+                        <!-- Botão de Compra de Ingressos -->
+                        <a href="PiVendas.html" class="btn-ticket">Comprar Ingressos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Função para atualizar o trailer
+        function updateTrailer(url) {
+            const trailerFrame = document.getElementById('trailerFrame');
+            trailerFrame.src = url; // Atualiza a URL do iframe para exibir o novo trailer
+        }
+
+        // Função para filtrar os filmes
+        function filterMovies(event) {
+            event.preventDefault(); // Previne o recarregamento da página ao enviar o formulário
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const movies = document.querySelectorAll('.movie-item');
+            
+            movies.forEach(movie => {
+                const title = movie.dataset.title.toLowerCase();
+                if (title.includes(searchInput)) {
+                    movie.style.display = 'block'; // Mostra o filme se corresponder à busca
+                } else {
+                    movie.style.display = 'none'; // Esconde o filme se não corresponder
+                }
+            });
+        }
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compra de Ingressos</title>
+    <link rel="shortcut icon" href="images/pipoca.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .seat-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 0; /* Remove arredondamento */
+            font-weight: bold;
+            margin: 2px; /* Espaçamento mínimo entre os assentos */
+            padding: 0;
+        }
+
+        /* Estilo do Modal customizado */
+        .modal-content {
+            background-color: #ffffff;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <!-- Header -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <h1 class="mb-0">Pipocando Cinemas</h1>
+                <form class="d-flex" role="search">
+                    <input type="text" class="form-control me-2" placeholder="Buscar filmes..." aria-label="Buscar">
+                    <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="row g-4">
+            <!-- Escolha do Filme -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title">Escolha um Filme</h2>
+                        <select class="form-select mb-3" id="movieSelect" aria-label="Escolha um Filme" onchange="updateResumo()">
+                            <option selected>Selecione um filme</option>
+                            <option value="Filme 1">Se7en: Os Sete Crimes Capitais</option>
+                            <option value="Filme 2">Fogo Contra Fogo</option>
+                            <option value="Filme 3">Ilha do Medo</option>
+                            <option value="Filme 4">Oppenheimer</option>
+                        </select>
+                        <h5 class="mb-3">Data e Horário</h5>
+                        <input type="date" class="form-control mb-3" id="dateSelect" onchange="updateResumo()">
+                        <select class="form-select mb-3" id="timeSelect" aria-label="Escolha um Horário" onchange="updateResumo()">
+                            <option selected>Escolha um horário</option>
+                            <option value="14:00">14:00</option>
+                            <option value="16:00">16:00</option>
+                            <option value="18:00">18:00</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Escolha de Assentos -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title text-center">Escolha seus Assentos</h2>
+                        <div class="text-center mb-3">
+                            <small class="text-muted">Clique nos assentos disponíveis para selecionar</small>
+                        </div>
+                        <div class="seats-container">
+                            <!-- Fila A -->
+                            <div class="d-flex flex-row justify-content-center mb-2">
+                                <button class="btn btn-outline-primary seat-button" id="A1" onclick="toggleSeat('A1')">A1</button>
+                                <button class="btn btn-outline-primary seat-button" id="A2" onclick="toggleSeat('A2')">A2</button>
+                                <button class="btn btn-outline-primary seat-button" id="A3" onclick="toggleSeat('A3')">A3</button>
+                                <button class="btn btn-outline-primary seat-button" id="A4" onclick="toggleSeat('A4')">A4</button>
+                            </div>
+                        
+                            <!-- Fila B -->
+                            <div class="d-flex flex-row justify-content-center mb-2">
+                                <button class="btn btn-outline-primary seat-button" id="B1" onclick="toggleSeat('B1')">B1</button>
+                                <button class="btn btn-outline-primary seat-button" id="B2" onclick="toggleSeat('B2')">B2</button>
+                                <button class="btn btn-outline-primary seat-button" id="B3" onclick="toggleSeat('B3')">B3</button>
+                                <button class="btn btn-outline-primary seat-button" id="B4" onclick="toggleSeat('B4')">B4</button>
+                            </div>
+                        
+                            <!-- Fila C -->
+                            <div class="d-flex flex-row justify-content-center mb-2">
+                                <button class="btn btn-outline-primary seat-button" id="C1" onclick="toggleSeat('C1')">C1</button>
+                                <button class="btn btn-outline-primary seat-button" id="C2" onclick="toggleSeat('C2')">C2</button>
+                                <button class="btn btn-outline-primary seat-button" id="C3" onclick="toggleSeat('C3')">C3</button>
+                                <button class="btn btn-outline-primary seat-button" id="C4" onclick="toggleSeat('C4')">C4</button>
+                            </div>
+                        
+                            <!-- Fila D -->
+                            <div class="d-flex flex-row justify-content-center">
+                                <button class="btn btn-outline-primary seat-button" id="D1" onclick="toggleSeat('D1')">D1</button>
+                                <button class="btn btn-outline-primary seat-button" id="D2" onclick="toggleSeat('D2')">D2</button>
+                                <button class="btn btn-outline-primary seat-button" id="D3" onclick="toggleSeat('D3')">D3</button>
+                                <button class="btn btn-outline-primary seat-button" id="D4" onclick="toggleSeat('D4')">D4</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumo e Compra -->
+        <div class="card mt-4 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title text-center">Resumo do Pedido</h3>
+                <ul class="list-group mb-4" id="orderSummary">
+                    <li class="list-group-item">Filme: <strong>Filme Selecionado</strong></li>
+                    <li class="list-group-item">Data: <strong>Data Selecionada</strong></li>
+                    <li class="list-group-item">Horário: <strong>Horário Selecionado</strong></li>
+                    <li class="list-group-item">Assentos: <strong>Assentos Selecionados</strong></li>
+                    <li class="list-group-item">Total: <strong>R$ 0,00</strong></li>
+                </ul>
+                <div class="text-center">
+                    <button class="btn btn-success btn-lg" onclick="confirmPurchase()">Confirmar Compra</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Alerta -->
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">Limite de Assentos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    Você só pode selecionar até 4 assentos.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedSeats = [];
+
+        function toggleSeat(seat) {
+            const seatIndex = selectedSeats.indexOf(seat);
+            const seatButton = document.getElementById(seat);
+
+            if (seatIndex === -1) {
+                if (selectedSeats.length >= 4) {
+                    // Exibe o modal de alerta
+                    const modal = new bootstrap.Modal(document.getElementById('alertModal'));
+                    modal.show();
+                    return; // Impede a seleção de mais assentos
+                }
+                selectedSeats.push(seat);
+                seatButton.classList.remove('btn-outline-primary');
+                seatButton.classList.add('btn-outline-danger');
+            } else {
+                selectedSeats.splice(seatIndex, 1);
+                seatButton.classList.remove('btn-outline-danger');
+                seatButton.classList.add('btn-outline-primary');
+            }
+
+            updateResumo();
+        }
+
+        function updateResumo() {
+            const summary = document.getElementById('orderSummary');
+            const seatList = selectedSeats.join(', ') || 'Nenhum assento selecionado';
+            const total = selectedSeats.length * 20;
+
+            summary.innerHTML = `
+                <li class="list-group-item">Filme: <strong>${document.getElementById('movieSelect').value}</strong></li>
+                <li class="list-group-item">Data: <strong>${document.getElementById('dateSelect').value}</strong></li>
+                <li class="list-group-item">Horário: <strong>${document.getElementById('timeSelect').value}</strong></li>
+                <li class="list-group-item">Assentos: <strong>${seatList}</strong></li>
+                <li class="list-group-item">Total: <strong>R$ ${total},00</strong></li>
+            `;
+        }
+
+        function confirmPurchase() {
+            if (
+                document.getElementById('movieSelect').value === 'Selecione um filme' ||
+                !document.getElementById('dateSelect').value ||
+                document.getElementById('timeSelect').value === 'Escolha um horário' ||
+                selectedSeats.length === 0
+            ) {
+                alert('Por favor, preencha todas as informações necessárias.');
+                return;
+            }
+
+            // Redireciona para PiPagamentos.html
+            window.location.href = 'PiPagamentos.html';
+        }
+    </script>
+</body>
+</html>
